@@ -8,6 +8,7 @@ class Presentation extends Model
 {
     protected $fillable = [
         'user_id',
+        'workspace_id',
         'title',
         'topic',
         'structure',
@@ -19,6 +20,16 @@ class Presentation extends Model
 
     protected $casts = [
         'structure' => 'array',
-        'views' => 'integer',
+        'views'     => 'integer',
     ];
+
+    public function workspace()
+    {
+        return $this->belongsTo(Workspace::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

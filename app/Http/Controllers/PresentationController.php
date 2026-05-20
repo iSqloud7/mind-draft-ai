@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Services\PresentationAIService;
 use App\Models\Presentation;
+use App\Models\Workspace;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class PresentationController extends Controller
@@ -28,19 +29,21 @@ class PresentationController extends Controller
         $data = $request->validate([
             'title' => 'required|string',
             'topic' => 'required|string',
-            'points' => 'required|array'
+            'points' => 'required|array',
+            'workspace_id' => 'nullable|exists:workspaces,id'
         ]);
 
         $structure = $ai->generate($data['topic'], $data['points']);
 
         $presentation = Presentation::create([
-            'user_id'   => auth()->id(),
-            'title'     => $data['title'],
-            'topic'     => $data['topic'],
-            'structure' => $structure
+            'user_id'      => auth()->id(),
+            'title'        => $data['title'],
+            'topic'        => $data['topic'],
+            'workspace_id' => $data['workspace_id'] ?? null,
+            'structure'    => $structure
         ]);
 
-        return redirect()->route('presentations.show', $presentation->id);
+        return redirect()->route('presentations.show', $presentation);
     }
 
     public function show(Presentation $presentation)
@@ -67,7 +70,7 @@ class PresentationController extends Controller
             'structure' => ['slides' => $request->slides]
         ]);
 
-        return redirect()->route('presentations.show', $presentation->id);
+        return redirect()->route('presentations.show', $presentation);
     }
 
     public function destroy(Presentation $presentation)
@@ -101,7 +104,7 @@ class PresentationController extends Controller
             'structure' => ['slides' => $slides]
         ]);
 
-        return redirect()->route('presentations.edit', $presentation->id);
+        return redirect()->route('presentations.edit', $presentation);
     }
 
     public function exportPdf($id)
@@ -124,5 +127,20 @@ class PresentationController extends Controller
         abort_if($presentation->user_id !== auth()->id(), 403);
 
         return view('presentations.present', compact('presentation'));
+    }
+
+    public function updateWorkspace(Request $request, Presentation $presentation)
+    {
+        abort_if($presentation->user_id !== auth()->id(), 403);
+
+        $data = $request->validate([
+            'workspace_id' => 'nullable|exists:workspaces,id'
+        ]);
+
+        $presentation->update([
+            'workspace_id' => $data['workspace_id']
+        ]);
+
+        return back();
     }
 }

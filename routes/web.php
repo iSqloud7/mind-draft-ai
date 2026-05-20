@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PresentationController;
+use App\Http\Controllers\WorkspaceController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -16,9 +17,12 @@ Route::get('/dashboard', [PresentationController::class, 'index'])
     ->name('dashboard');
 
 Route::middleware(['auth'])->group(function () {
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::resource('workspaces', WorkspaceController::class);
 
     Route::get('/presentations', [PresentationController::class, 'index'])->name('presentations.index');
     Route::get('/presentations/create', [PresentationController::class, 'create'])->name('presentations.create');
@@ -27,10 +31,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/presentations/{presentation}/edit', [PresentationController::class, 'edit'])->name('presentations.edit');
     Route::put('/presentations/{presentation}', [PresentationController::class, 'update'])->name('presentations.update');
     Route::delete('/presentations/{presentation}', [PresentationController::class, 'destroy'])->name('presentations.destroy');
-    Route::post('/presentations/{id}/regenerate-slide/{index}', [PresentationController::class, 'regenerateSlide']);
 
-    Route::get('/presentations/{id}/present', [PresentationController::class, 'present'])->name('presentations.present'); // ← ново
-    Route::get('/presentations/{id}/export-pdf', [PresentationController::class, 'exportPdf'])->name('presentations.export-pdf'); // ← ново
+    Route::post('/presentations/{id}/regenerate-slide/{index}', [PresentationController::class, 'regenerateSlide']);
+    Route::get('/presentations/{id}/present', [PresentationController::class, 'present'])->name('presentations.present');
+    Route::get('/presentations/{id}/export-pdf', [PresentationController::class, 'exportPdf'])->name('presentations.export-pdf');
+
+    Route::patch('/presentations/{presentation}/workspace', [PresentationController::class, 'updateWorkspace'])
+        ->name('presentations.updateWorkspace');
 });
 
 require __DIR__.'/auth.php';

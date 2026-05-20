@@ -26,12 +26,14 @@ class PresentationAIService
         $prompt = $this->buildPrompt($topic, $points);
 
         $response = $this->client->chat()->create([
-            'model' => 'openai/gpt-oss-20b:free',
+//            'model' => 'openai/gpt-oss-20b:free',
+            'model' => 'qwen/qwen3-coder',
             'messages' => [
                 ['role' => 'system', 'content' => 'You are an expert presentation creator. Return ONLY valid json.'],
                 ['role' => 'user', 'content' => $prompt]
             ],
             'temperature' => 0.7,
+            'max_tokens' => 6000,
         ]);
 
         $content = $response->choices[0]->message->content;
