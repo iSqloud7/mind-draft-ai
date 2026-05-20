@@ -10,10 +10,16 @@ return new class extends Migration
     {
         Schema::create('presentations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('user_id')
+                ->constrained()
+                ->cascadeOnDelete();
             $table->string('title');
             $table->string('topic');
             $table->json('structure');
+            $table->string('share_token', 64)->unique()->nullable();
+            $table->unsignedInteger('views')->default(0);
+            $table->string('ai_model')->nullable();
+            $table->float('ai_temperature')->nullable();
             $table->timestamps();
         });
     }

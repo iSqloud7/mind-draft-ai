@@ -10,10 +10,15 @@ class Presentation extends Model
         'user_id',
         'title',
         'topic',
-        'structure'
+        'structure',
+        'share_token',
+        'views',
+        'ai_model',
+        'ai_temperature',
     ];
 
     protected $casts = [
-        'structure' => 'array'
+        'structure' => 'array',
+        'views' => 'integer',
     ];
 }
