@@ -7,6 +7,7 @@ use App\Models\Workspace;
 
 class WorkspaceController extends Controller
 {
+    // List all user workspaces with presentation counts.
     public function index()
     {
         $workspaces = auth()->user()->workspaces()->withCount('presentations')->latest()->get();
@@ -14,11 +15,13 @@ class WorkspaceController extends Controller
         return view('workspaces.index', compact('workspaces'));
     }
 
+    // Show workspace creation form.
     public function create()
     {
         return view('workspaces.create');
     }
 
+    // Save new workspace and link selected presentations.
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -29,8 +32,8 @@ class WorkspaceController extends Controller
 
         $workspace = Workspace::create([
             'user_id' => auth()->id(),
-            'name'    => $data['name'],
-            'slug'    => \Illuminate\Support\Str::slug($data['name']) . '-' . \Illuminate\Support\Str::random(5),
+            'name' => $data['name'],
+            'slug' => \Illuminate\Support\Str::slug($data['name']) . '-' . \Illuminate\Support\Str::random(5),
         ]);
 
         if (!empty($data['presentations'])) {
@@ -44,6 +47,7 @@ class WorkspaceController extends Controller
         return redirect()->route('workspaces.show', $workspace);
     }
 
+    // View specific workspace and its presentations.
     public function show(Workspace $workspace)
     {
         abort_if($workspace->user_id !== auth()->id(), 403);
@@ -53,6 +57,7 @@ class WorkspaceController extends Controller
         return view('workspaces.show', compact('workspace', 'presentations'));
     }
 
+    // Show edit form for existing workspace.
     public function edit(Workspace $workspace)
     {
         abort_if($workspace->user_id !== auth()->id(), 403);
@@ -60,6 +65,7 @@ class WorkspaceController extends Controller
         return view('workspaces.edit', compact('workspace'));
     }
 
+    // Update workspace name and sync presentation links.
     public function update(Request $request, Workspace $workspace)
     {
         abort_if($workspace->user_id !== auth()->id(), 403);
@@ -70,19 +76,16 @@ class WorkspaceController extends Controller
             'presentations.*' => 'exists:presentations,id',
         ]);
 
-        // 1. update name
         $workspace->update([
             'name' => $data['name']
         ]);
 
         $selected = $data['presentations'] ?? [];
 
-        // 2. remove old relations
         \App\Models\Presentation::where('workspace_id', $workspace->id)
             ->where('user_id', auth()->id())
             ->update(['workspace_id' => null]);
 
-        // 3. add selected
         if (!empty($selected)) {
             \App\Models\Presentation::whereIn('id', $selected)
                 ->where('user_id', auth()->id())
@@ -94,6 +97,7 @@ class WorkspaceController extends Controller
         return redirect()->route('workspaces.show', $workspace);
     }
 
+    // Delete workspace.
     public function destroy(Workspace $workspace)
     {
         abort_if($workspace->user_id !== auth()->id(), 403);

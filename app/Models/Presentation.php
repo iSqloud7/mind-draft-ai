@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Presentation extends Model
 {
+    // List of database columns allowed for saving.
     protected $fillable = [
         'user_id',
         'workspace_id',
@@ -18,16 +19,19 @@ class Presentation extends Model
         'ai_temperature',
     ];
 
+    // Cast attributes to specific data types.
     protected $casts = [
         'structure' => 'array',
-        'views'     => 'integer',
+        'views' => 'integer',
     ];
 
+    // Relationship: Presentation belongs to a Workspace.
     public function workspace()
     {
         return $this->belongsTo(Workspace::class);
     }
 
+    // Relationship: Presentation belongs to a User.
     public function user()
     {
         return $this->belongsTo(User::class);

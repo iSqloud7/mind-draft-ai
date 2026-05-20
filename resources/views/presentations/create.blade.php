@@ -1,106 +1,103 @@
 <x-app-layout>
-    <div class="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center py-12 px-4">
+    <div class="min-h-screen bg-black text-white flex items-center justify-center py-16 px-4">
         <div class="w-full max-w-2xl">
 
-            {{-- Back --}}
-            <a href="/dashboard" class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-indigo-600 mb-8 transition-colors">
+            <a href="/dashboard" class="inline-flex items-center gap-2 text-sm text-zinc-500 hover:text-red-500 mb-8 transition-colors font-bold uppercase tracking-wider">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"/>
                 </svg>
                 Back to Dashboard
             </a>
 
-            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 p-8">
+            <div class="bg-zinc-950 rounded-2xl shadow-[0_10px_50px_rgba(0,0,0,0.8)] border border-zinc-900 p-8 sm:p-10">
 
-                {{-- Header --}}
-                <div class="mb-8">
-                    <div class="flex items-center gap-3 mb-3">
-                        <div class="bg-indigo-100 dark:bg-indigo-900/50 rounded-xl p-2">
-                            <svg class="w-6 h-6 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="mb-10">
+                    <div class="flex items-center gap-4 mb-3">
+                        <div class="bg-red-600/10 border border-red-600/20 rounded-xl p-3 text-red-600 shadow-[0_0_15px_rgba(220,38,38,0.15)]">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                             </svg>
                         </div>
-                        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Generate Presentation</h1>
+                        <h1 class="text-2xl sm:text-3xl font-black text-white uppercase tracking-tight">Generate Presentation</h1>
                     </div>
-                    <p class="text-gray-500 dark:text-gray-400">Fill in the details and AI will create your slides instantly.</p>
+                    <p class="text-zinc-500 font-medium tracking-wide">Fill in the details and AI will create your slides instantly.</p>
                 </div>
 
-                <form method="POST" action="/presentations" id="generate-form">
+                <form method="POST" action="/presentations" id="generate-form" class="space-y-6">
                     @csrf
 
-                    {{-- Title --}}
-                    <div class="mb-5">
-                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                    <div>
+                        <label class="block text-xs font-black uppercase tracking-widest text-zinc-400 mb-2">
                             Presentation Title
                         </label>
                         <input type="text" name="title"
                                value="{{ old('title') }}"
-                               placeholder="e.g. The Future of Artificial Intelligence"
-                               class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition">
+                               placeholder="example: The Future of Artificial Intelligence."
+                               class="w-full px-4 py-3.5 rounded-xl border border-zinc-900 bg-zinc-950 text-white placeholder-zinc-700 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 transition duration-200 outline-none">
                         @error('title')
-                        <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                        <p class="mt-2 text-xs font-bold text-red-500 tracking-wide">⚠️ {{ $message }}</p>
                         @enderror
                     </div>
 
-                    {{-- Topic --}}
-                    <div class="mb-5">
-                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                    <div>
+                        <label class="block text-xs font-black uppercase tracking-widest text-zinc-400 mb-2">
                             Main Topic
                         </label>
                         <input type="text" name="topic"
                                value="{{ old('topic') }}"
-                               placeholder="e.g. Machine Learning in Healthcare"
-                               class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition">
+                               placeholder="example: Machine Learning in Healthcare."
+                               class="w-full px-4 py-3.5 rounded-xl border border-zinc-900 bg-zinc-950 text-white placeholder-zinc-700 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 transition duration-200 outline-none">
                         @error('topic')
-                        <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                        <p class="mt-2 text-xs font-bold text-red-500 tracking-wide">⚠️ {{ $message }}</p>
                         @enderror
                     </div>
 
-                    {{-- Key Points --}}
-                    <div class="mb-8">
-                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                    <div>
+                        <label class="block text-xs font-black uppercase tracking-widest text-zinc-400 mb-3">
                             Key Points
-                            <span class="font-normal text-gray-400">(up to 5)</span>
+                            <span class="font-bold text-zinc-600 lowercase">(up to 7)</span>
                         </label>
-                        <div class="space-y-3" id="points-container">
+
+                        <div class="space-y-3.5" id="points-container">
                             @for($i = 0; $i < 3; $i++)
-                                <div class="flex items-center gap-2 point-row">
-                                    <span class="text-xs font-bold text-indigo-400 w-6 text-center">{{ $i + 1 }}</span>
+                                <div class="flex items-center gap-3 point-row">
+                                    <span class="text-xs font-black text-red-600 w-6 text-center">{{ $i + 1 }}</span>
                                     <input type="text" name="points[]"
                                            value="{{ old('points.'.$i) }}"
-                                           placeholder="Key point {{ $i + 1 }}"
-                                           class="flex-1 px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition">
+                                           placeholder="Key point {{ $i + 1 }}."
+                                           class="flex-1 px-4 py-3.5 rounded-xl border border-zinc-900 bg-zinc-950 text-white placeholder-zinc-700 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 transition duration-200 outline-none">
                                     @if($i >= 1)
                                         <button type="button" onclick="removePoint(this)"
-                                                class="text-gray-300 hover:text-red-400 transition-colors">
+                                                class="text-zinc-600 hover:text-red-500 transition-colors p-1">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                                             </svg>
                                         </button>
                                     @else
-                                        <div class="w-5"></div>
+                                        <div class="w-7"></div>
                                     @endif
                                 </div>
                             @endfor
                         </div>
 
                         <button type="button" onclick="addPoint()"
-                                class="mt-3 inline-flex items-center gap-1 text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 font-medium transition-colors">
+                                class="mt-4 inline-flex items-center gap-1.5 text-xs font-black text-red-500 hover:text-red-400 uppercase tracking-widest transition-colors">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"/>
                             </svg>
                             Add another point
                         </button>
                     </div>
 
-                    {{-- Submit --}}
-                    <button type="submit" id="submit-btn"
-                            class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-xl shadow-md transition-all duration-200 hover:scale-[1.02] flex items-center justify-center gap-3">
-                        <svg id="btn-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                        </svg>
-                        <span id="btn-text">Generate with AI</span>
-                    </button>
+                    <div class="pt-4">
+                        <button type="submit" id="submit-btn"
+                                class="w-full bg-red-600 hover:bg-red-700 text-white font-black py-4 rounded-xl shadow-[0_4px_25px_rgba(220,38,38,0.2)] hover:scale-[1.01] active:scale-[0.99] transition-all duration-200 flex items-center justify-center gap-3 uppercase tracking-widest text-xs">
+                            <svg id="btn-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                            </svg>
+                            <span id="btn-text">Generate with AI</span>
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -110,16 +107,16 @@
         let pointCount = 3;
 
         function addPoint() {
-            if (pointCount >= 5) return;
+            if (pointCount >= 7) return;
             pointCount++;
             const container = document.getElementById('points-container');
             const div = document.createElement('div');
-            div.className = 'flex items-center gap-2 point-row';
+            div.className = 'flex items-center gap-3 point-row';
             div.innerHTML = `
-                <span class="text-xs font-bold text-indigo-400 w-6 text-center">${pointCount}</span>
+                <span class="text-xs font-black text-red-600 w-6 text-center">${pointCount}</span>
                 <input type="text" name="points[]" placeholder="Key point ${pointCount}"
-                       class="flex-1 px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition">
-                <button type="button" onclick="removePoint(this)" class="text-gray-300 hover:text-red-400 transition-colors">
+                       class="flex-1 px-4 py-3.5 rounded-xl border border-zinc-900 bg-zinc-950 text-white placeholder-zinc-700 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 transition duration-200 outline-none">
+                <button type="button" onclick="removePoint(this)" class="text-zinc-600 hover:text-red-500 transition-colors p-1">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
@@ -146,8 +143,8 @@
             const btn = document.getElementById('submit-btn');
             const text = document.getElementById('btn-text');
             btn.disabled = true;
-            btn.classList.add('opacity-75');
-            text.textContent = 'Generating...';
+            btn.classList.add('opacity-50', 'cursor-not-allowed');
+            text.textContent = 'Generating with AI...';
         });
     </script>
 </x-app-layout>

@@ -7,8 +7,10 @@ use Illuminate\Support\Str;
 
 class Workspace extends Model
 {
+    // Database columns for input.
     protected $fillable = ['user_id', 'name', 'slug'];
 
+    // Auto-generate unique slug on creation.
     protected static function boot()
     {
         parent::boot();
@@ -20,11 +22,13 @@ class Workspace extends Model
         });
     }
 
+    // Link to owner.
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
+    // Link to related presentations.
     public function presentations()
     {
         return $this->hasMany(Presentation::class);

@@ -1,88 +1,46 @@
 <x-app-layout>
-    <div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-10">
-
+    <div class="min-h-screen bg-zinc-950 py-10">
         <div class="max-w-2xl mx-auto px-6">
 
-            <div class="mb-6">
-
-                <a href="{{ route('workspaces.show', $workspace) }}"
-                   class="text-sm text-gray-500 hover:text-emerald-600">
-                    ← Back
+            <div class="mb-8">
+                <a href="{{ route('workspaces.show', $workspace) }}" class="text-sm text-zinc-500 hover:text-white transition">
+                    ← Back to Workspace
                 </a>
-
-                <h1 class="text-2xl font-bold text-gray-900 dark:text-white mt-3">
-                    Edit Workspace
-                </h1>
-
+                <h1 class="text-3xl font-black text-white tracking-tighter mt-3">Edit Workspace</h1>
             </div>
 
-            @php
-                $selected = $workspace->presentations->pluck('id')->toArray();
-            @endphp
-
-            <form method="POST" action="{{ route('workspaces.update', $workspace) }}"
-                  class="bg-white dark:bg-gray-800 p-6 rounded-2xl border">
-
+            <form action="{{ route('workspaces.update', $workspace) }}" method="POST" class="bg-zinc-900 p-8 rounded-2xl border border-zinc-800">
                 @csrf
                 @method('PUT')
 
-                <input type="text"
-                       name="name"
-                       value="{{ $workspace->name }}"
-                       class="w-full mb-6 px-4 py-3 border rounded-xl dark:bg-gray-700 dark:text-white">
-
                 <div class="mb-6">
+                    <label class="block text-sm font-bold text-zinc-300 mb-2">Workspace Name</label>
+                    <input type="text" name="name" value="{{ old('name', $workspace->name) }}" required
+                           class="w-full bg-zinc-950 border border-zinc-800 text-white rounded-xl px-4 py-3 focus:border-red-600 focus:ring-1 focus:ring-red-600 outline-none transition">
+                </div>
 
-                    <h3 class="font-semibold mb-3 text-gray-700 dark:text-gray-200">
-                        Manage Presentations
-                    </h3>
+                <div class="mb-8">
+                    <h3 class="font-bold text-zinc-300 mb-4">Manage Presentations</h3>
 
-                    <div class="max-h-60 overflow-y-auto border rounded-xl p-4 dark:border-gray-700">
-
+                    <div class="max-h-60 overflow-y-auto border border-zinc-800 rounded-xl p-4 bg-zinc-950">
                         @foreach(auth()->user()->presentations as $p)
-
-                            <label class="flex items-center gap-2 mb-2 text-sm">
-
+                            <label class="flex items-center gap-3 mb-3 text-sm text-zinc-300 hover:text-white cursor-pointer">
                                 <input type="checkbox"
                                        name="presentations[]"
                                        value="{{ $p->id }}"
-                                    @checked(in_array($p->id, $selected))>
-
-                                <span class="text-gray-700 dark:text-gray-300">
-                                    {{ $p->title }}
-                                </span>
-
+                                       @checked($p->workspace_id == $workspace->id)
+                                       class="rounded border-zinc-700 bg-zinc-900 text-red-600 focus:ring-red-600">
+                                {{ $p->title }}
                             </label>
-
                         @endforeach
-
                     </div>
-
                 </div>
 
-                <div class="flex gap-3">
-
-                    <button class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl font-semibold">
-                        Update
-                    </button>
-
-                    <form method="POST" action="{{ route('workspaces.destroy', $workspace) }}">
-                        @csrf
-                        @method('DELETE')
-
-                        <button type="submit"
-                                onclick="return confirm('Delete workspace?')"
-                                class="px-5 py-3 rounded-xl bg-red-500 text-white font-semibold">
-                            Delete
-                        </button>
-
-                    </form>
-
-                </div>
-
+                <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl transition">
+                    Save Changes
+                </button>
             </form>
 
         </div>
-
     </div>
 </x-app-layout>

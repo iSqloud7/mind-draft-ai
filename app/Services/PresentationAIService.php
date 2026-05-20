@@ -6,6 +6,7 @@ class PresentationAIService
 {
     private $client;
 
+    // Initialize client with OpenRouter config and SSL certificate.
     public function __construct()
     {
         $this->client = \OpenAI::factory()
@@ -21,12 +22,13 @@ class PresentationAIService
             ->make();
     }
 
+    // Request AI slide generation and handle JSON response.
     public function generate(string $topic, array $points): array
     {
         $prompt = $this->buildPrompt($topic, $points);
 
         $response = $this->client->chat()->create([
-//            'model' => 'openai/gpt-oss-20b:free',
+            # 'model' => 'openai/gpt-oss-20b:free',
             'model' => 'qwen/qwen3-coder',
             'messages' => [
                 ['role' => 'system', 'content' => 'You are an expert presentation creator. Return ONLY valid json.'],
@@ -38,6 +40,7 @@ class PresentationAIService
 
         $content = $response->choices[0]->message->content;
 
+        // Clean Markdown tags and decode JSON.
         $clean = preg_replace('/```json|```/i', '', $content);
         $clean = trim($clean);
 
@@ -51,15 +54,23 @@ class PresentationAIService
         return $decoded;
     }
 
+    // Format the prompt with topic, points, and JSON rules.
     private function buildPrompt(string $topic, array $points): string
     {
-        $pointsText = implode(", ", $points);
+        $pointsCount = count($points);
+        $pointsText = implode("\n- ", $points);
 
         return "
 Create a presentation structure in STRICT JSON format.
 
 Topic: {$topic}
-Key points: {$pointsText}
+Key points to cover:
+- {$pointsText}
+
+INSTRUCTIONS:
+1. Create exactly {$pointsCount} slides, one for each key point provided.
+2. Add a Title slide at the beginning and a Summary slide at the end.
+3. Total slides should be {$pointsCount} + 2.
 
 Return format EXACTLY:
 {
